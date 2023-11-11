@@ -23,6 +23,8 @@ services:
     tty: true
     env_file:
       - .env
+    environment:
+      - IS_BUILD=true
     command: php -S 0.0.0.0:8080 /server/router.php
     ports: 
       - "8080:8080"
