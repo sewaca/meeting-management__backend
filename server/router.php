@@ -1,6 +1,6 @@
 <?php
 
-define('BASE_PATH', ''); // FIXME: CHANGE ON DEPLOY
+define('BASE_PATH', ($_ENV['IS_BUILD'] ? '' : '.'));
 
 include_once BASE_PATH."/server/headers.php";
 include_once BASE_PATH."/server/definitions.php";
@@ -19,7 +19,5 @@ endpoint("office/getAllRooms");
 // ^ GET /room/info/
 endpoint("room/info");
 
-
 include BASE_PATH."/server/404.php";
-
 ?>

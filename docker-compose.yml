@@ -21,6 +21,8 @@ services:
     container_name: backend
     restart: always
     tty: true
+    env_file:
+      - .env
     command: php -S 0.0.0.0:8080 /server/router.php
     ports: 
       - "8080:8080"
