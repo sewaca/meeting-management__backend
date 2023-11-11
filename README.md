@@ -10,3 +10,13 @@ Backend для приложения, разворачиваемый на localho
 ```
 docker-compose down
 ```
+
+## Тестовые данные:
+
+Тестовый аккаунт для логина:
+```json
+{
+    "email": "example@mail.ru",
+    "password": "my_new_insane_pass"
+}
+```
