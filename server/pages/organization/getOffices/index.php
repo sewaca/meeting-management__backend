@@ -17,8 +17,12 @@ try {
   else 
     $stmt->bind_param("d", $organization);
   $stmt->execute();
-  $res = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-  echo json_encode($res);
+  $offices = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+  $cities = array_values(array_unique(array_map(function($office){ return $office['city']; }, $offices)));
+  echo json_encode([
+    "offices" => $offices,
+    "cities" => $cities
+  ]);
 }
 catch ( Exception $e ) {
   include BASE_PATH."/server/500.php";

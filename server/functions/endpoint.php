@@ -8,9 +8,9 @@ function endpoint($path, $method = 'GET'){
   $regex = "/^\/".str_replace('/', '\/', $path)."\/?$"
           ."|^\/".str_replace('/', '\/', $path)."\/.*$/i";
 
-  if (!preg_match($regex, $request_url) or !file_exists(BASE_PATH."/server/$path/index.php") or $request_method !== $method)
+  if (!preg_match($regex, $request_url) or !file_exists(BASE_PATH."/server/pages/$path/index.php") or $request_method !== $method)
     return;
 
-  include BASE_PATH."/server/$path/index.php";
+  include BASE_PATH."/server/pages/$path/index.php";
   exit;
 }

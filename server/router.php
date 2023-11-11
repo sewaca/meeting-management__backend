@@ -18,6 +18,10 @@ endpoint("organization/getOffices");
 endpoint("office/getAllRooms");
 // ^ GET /room/info/
 endpoint("room/info");
+// ^ GET /room/isFree/
+endpoint("room/isFree");
+// ^ GET /test/
+endpoint("test");
 
 include BASE_PATH."/server/404.php";
 ?>
