@@ -23,12 +23,26 @@ try {
   $stmt->execute();
   $room_data = array_values($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
 
+  // Получаем приглашенных участников
+  $sql = "SELECT `email` FROM `employees` WHERE `id` IN (SELECT `paricipant` FROM `events` WHERE `table_def_id` = ? GROUP BY `paricipant`)";
+  $stmt = $link->prepare($sql);
+  $stmt->bind_param("s", $event_id);
+  $stmt->execute();
+  $participant_emails = array_map(function($a){ return $a['email']; }, $stmt->get_result()->fetch_all(MYSQLI_ASSOC));
+  
   // TODO: Добавить Office Timezone
+  // $sql = "SELECT `timezone` FROM `offices` WHERE `id` = (SELECT `office_id` FROM `meeting_rooms` WHERE `id` = ? ) ";
+  // $stmt = $link->prepare($sql);
+  // $stmt->bind_param("s", $event_id);
+  // $stmt->execute();
+  // $participant_emails = array_map(function($a){ return $a['email']; }, $stmt->get_result()->fetch_all(MYSQLI_ASSOC));
+  
 
   echo json_encode([
     'id' => $main_data['table_def_id'],
-    'name' => $main_data['name'],
+    'name' => $main_data['name'], 
     'rooms' => $room_data,
+    'paricipants' => $participant_emails,
     'description' => $main_data['description'],
     'start' => $main_data['start'],
     'end' => $main_data['end'],

@@ -51,6 +51,14 @@ class SimpleCalDAVClient {
 	private $client;
     private $url;
 
+
+
+	function getClient(){
+		return $this->client;
+	}
+	function getURL(){
+		return $this->url;
+	}
 	/**
 	 * function connect()
 	 * Connects to a CalDAV-Server.

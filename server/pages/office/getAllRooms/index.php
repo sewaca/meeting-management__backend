@@ -3,7 +3,8 @@
 // TODO:! Отображать текущее состояние занятости и событие которое там идет, если такое есть 
 
 $office_id = $_GET['office_id'];
-$status = json_decode($_GET["status"]);
+$status = json_decode($_GET["status"] ? $_GET["status"] : "");
+
 
 try {
   // Подключаемся к БД
