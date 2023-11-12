@@ -1,6 +1,5 @@
 <?php 
 
-include_once BASE_PATH."/server/functions/decode_jwt.php";
 include BASE_PATH."/server/libraries/simpleCalDAV-master/SimpleCalDAVClient.php";
 
 try {
@@ -9,6 +8,7 @@ try {
   $start = str_replace(":", "", str_replace(" ", "T", str_replace(".", "", $params['start'])));
   $end = str_replace(":", "", str_replace(" ", "T", str_replace(".", "", $params['end'])));
   $response = [];
+  $common_event_id = hexdec(uniqid()) % 1000000000;
 
   if (
     !$params['author']
@@ -46,7 +46,7 @@ try{
   );
   // Получаем все доступные календари
   $all_calendars = $client->findCalendars();
-  
+
   // ~ Для каждой из занимаемых комнат
   foreach($params['rooms'] as $room){
     $calendar_id = null;
@@ -60,15 +60,23 @@ try{
     
     $client->setCalendar($all_calendars[$calendar_id]);
 
-    // Проверяем свободна ли комната
-    $events = $client->getEvents($start.'Z', $end.'Z');
+    // Проверяем свободна ли комната`
+    $link = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+    if ($link->connect_error)
+      throw new Exception("Connection failed");
+    $sql = "SELECT `id` from `events` where (`start` >= ? and `start` <= ?) or (`end` >= ? and `end` <= ?) or (`start` <= ? and `end` >= ?)";
+    $stmt = $link->prepare($sql);
+    $stmt->bind_param("ssssss", $params['start'], $params['end'], $params['start'], $params['end'], $params['start'], $params['end']);
+    $stmt->execute();
+    $events = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     if (count($events) > 0) {
       // Если занята, то записываем в ответ 0 и переходим к следующей комнате
       array_push($response, false);
       continue;
     } 
-    $unique_id = '6kqjide'.uniqid().'yandex.ru';
+    
     // Выстраиваем запрос:
+    $unique_id = '6kqjide'.uniqid().'yandex.ru';
     $req =  'BEGIN:VCALENDAR'.PHP_EOL.
             'VERSION:2.0'.PHP_EOL.
             'PRODID:-//Yandex LLC//Yandex Calendar//EN'.PHP_EOL.
@@ -102,7 +110,6 @@ try{
       'id' => null
     ];
 
-    // TODO:? Хранить в БД периодичность события?
     // TODO: Отслеживать, если в разных rooms числятся разные компании
 
     // Определяем в какой компании работает пользователь:
@@ -132,17 +139,17 @@ try{
 
     // Если нет участников из бд
     if (count($participants) === 0){
-      $sql = 'INSERT INTO `events` (`name`, `author`, `room_id`, `start`, `end`, `description`, `uniqueid`) VALUES (?, ?, ?, ?, ?, ?, ?); ';
+      $sql = 'INSERT INTO `events` (`name`, `author`, `room_id`, `start`, `end`, `description`, `uniqueid`, `freq_rule`, `freq_interval`, `table_def_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ';
       $stmt = $link->prepare($sql);
-      $stmt->bind_param("sddssss", $params['event_name'], $author['id'], $room['id'], $params['start'], $params['end'], $params['description'], $unique_id);
+      $stmt->bind_param("sddsssssii", $params['event_name'], $author['id'], $room['id'], $params['start'], $params['end'], $params['description'], $unique_id, $params['freq']['rule'], $params['freq']["interval"], $common_event_id);
       $stmt->execute();
     }
     // Иначе для каждого участника сделать запрос
     else {
-      $sql = 'INSERT INTO `events` (`name`, `author`, `paricipant`, `room_id`, `start`, `end`, `description`, `uniqueid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
+      $sql = 'INSERT INTO `events` (`name`, `author`, `paricipant`, `room_id`, `start`, `end`, `description`, `uniqueid`, `freq_rule`, `freq_interval`, `table_def_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
       $stmt = $link->prepare($sql);
       foreach($participants as $participant){
-        $stmt->bind_param("siiissss", $params['event_name'], $author['id'], $participant['id'], $room['id'], $params['start'], $params['end'], $params['description'], $unique_id);
+        $stmt->bind_param("siiisssssii", $params['event_name'], $author['id'], $participant['id'], $room['id'], $params['start'], $params['end'], $params['description'], $unique_id, $params['freq']['rule'], $params['freq']["interval"], $common_event_id);
         $stmt->execute();
       }
     }

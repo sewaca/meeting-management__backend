@@ -35,6 +35,9 @@ endpoint("room/addEvent", "POST");
 // ^ GET /user/getMyEvents/
 endpoint("user/getMyEvents");
 
+// ^ GET /event/getFullData/
+endpoint("event/getFullData");
+
 // ! POST /event/edit/
 endpoint("event/edit", "POST");
 

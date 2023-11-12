@@ -1,5 +1,6 @@
-
 <?php
+
+
 try {
   // Декодируем user_email из jwt
   $user_email = decode_jwt($_GET["id"]);
@@ -31,27 +32,21 @@ try {
   $stmt->execute();
   $events = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
   
-  // TODO: Сделать чтобы все одинаковые строки сливались
   $filters = [];
-
   $sql = "SELECT `name` FROM `meeting_rooms` WHERE `id` = ?";
   $stmt = $link->prepare($sql);
   foreach ($events as $event) {
-    if (in_array($event["uniqueid"], $filters)) continue;
-    array_push($filters, $event["uniqueid"]);
+    if (in_array($event["table_def_id"], $filters)) continue;
+    array_push($filters, $event["table_def_id"]);
     
     $stmt->bind_param("i", $event['room_id']);
     $stmt->execute();
     $room_name = $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     
     array_push($response, [
-      "id" => $event["id"],
+      "id" => $event["table_def_id"],
       "role" => in_array($event["author"], $ids) ? "author" : "participant",
       "name" => $event["name"],
-      "room" => [
-        "id" => $event["room_id"],
-        "name" => $room_name["name"],
-      ],
       "description" => $event["description"],
       "start" => $event["start"],
       "end" => $event["end"],
