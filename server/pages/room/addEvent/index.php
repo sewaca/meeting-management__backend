@@ -57,18 +57,9 @@ try{
     if (!$calendar_id) {
       include BASE_PATH."/server/404.php";
     }
-    
     $client->setCalendar($all_calendars[$calendar_id]);
 
-    // Проверяем свободна ли комната`
-    $link = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-    if ($link->connect_error)
-      throw new Exception("Connection failed");
-    $sql = "SELECT `id` from `events` where (`start` >= ? and `start` <= ?) or (`end` >= ? and `end` <= ?) or (`start` <= ? and `end` >= ?)";
-    $stmt = $link->prepare($sql);
-    $stmt->bind_param("ssssss", $params['start'], $params['end'], $params['start'], $params['end'], $params['start'], $params['end']);
-    $stmt->execute();
-    $events = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $events = $client->getEvents($start.'Z', $end.'Z');    
     if (count($events) > 0) {
       // Если занята, то записываем в ответ 0 и переходим к следующей комнате
       array_push($response, false);
@@ -133,15 +124,26 @@ try{
       $stmt->bind_param("sd", $participant_email, $room['id']);
       $stmt->execute();
       $res = $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
-      if (!$res) continue;
+      
+      if (!$res) {
+        $sql = "INSERT INTO `employees` (`email`, `organization_id`) VALUES (?, (SELECT `organization_id` FROM `offices` WHERE `id` = (SELECT `office_id` FROM `meeting_rooms` WHERE `id` = ?) LIMIT 1));";
+        $stmt = $link->prepare($sql);
+        $stmt->bind_param("si", $participant_email, $room['id']);
+        $stmt->execute();
+        $sql = 'SELECT `id` from `employees` where `email` = ? and `organization_id` = (SELECT `organization_id` FROM `offices` WHERE `id` = (SELECT `office_id` FROM `meeting_rooms` WHERE `id` = ?))';
+        $stmt = $link->prepare($sql);
+        $stmt->bind_param("si", $participant_email, $room['id']);
+        $stmt->execute();
+        $res = $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
+      }
       array_push($participants, [ "email" => $participant_email, "id" => $res['id'] ]);
     }
 
     // Если нет участников из бд
     if (count($participants) === 0){
-      $sql = 'INSERT INTO `events` (`name`, `author`, `room_id`, `start`, `end`, `description`, `uniqueid`, `freq_rule`, `freq_interval`, `table_def_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ';
+      $sql = 'INSERT INTO `events` (`name`, `author`, `paricipant`, `room_id`, `start`, `end`, `description`, `uniqueid`, `freq_rule`, `freq_interval`, `table_def_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ';
       $stmt = $link->prepare($sql);
-      $stmt->bind_param("sddsssssii", $params['event_name'], $author['id'], $room['id'], $params['start'], $params['end'], $params['description'], $unique_id, $params['freq']['rule'], $params['freq']["interval"], $common_event_id);
+      $stmt->bind_param("sddsssssii", $params['event_name'], $author['id'], $author['id'], $room['id'], $params['start'], $params['end'], $params['description'], $unique_id, $params['freq']['rule'], $params['freq']["interval"], $common_event_id);
       $stmt->execute();
     }
     // Иначе для каждого участника сделать запрос

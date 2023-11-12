@@ -20,7 +20,7 @@ try {
     include BASE_PATH."/server/404.php";
 
   // TODO: Проверка что пользователь - создатель события
-
+  
   
   // Получаем данные из БД
   $link = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
