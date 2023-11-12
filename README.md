@@ -16,7 +16,7 @@ docker-compose down
 Тестовый аккаунт для логина:
 ```json
 {
-    "email": "example@mail.ru",
+    "email": "example@gmail.com",
     "password": "my_new_insane_pass"
 }
 ```
