@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS meetings;
 USE meetings;
+
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: meetings
@@ -33,7 +34,7 @@ CREATE TABLE `employees` (
   PRIMARY KEY (`id`),
   KEY `employees_fk0` (`organization_id`),
   CONSTRAINT `employees_fk0` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +43,7 @@ CREATE TABLE `employees` (
 
 LOCK TABLES `employees` WRITE;
 /*!40000 ALTER TABLE `employees` DISABLE KEYS */;
-INSERT INTO `employees` VALUES (4,'Иванов Пётр Гринорьевич','example@mail.ru','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',3),(5,'Иванов Пётр Гринорьевич','example@mail.ru','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',4),(6,'Иванов Пётр Гринорьевич','example@mail.ru','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',1),(7,'Приколов Прикол Приколович','example2@mail.ru','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',1);
+INSERT INTO `employees` VALUES (4,'Захаров Артем Викторович','example@gmail.com','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',3),(5,'Захаров Артем Викторович','example@gmail.com','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',4),(6,'Захаров Артем Викторович','example@gmail.com','$2y$10$J4V/eClHpwDKSS62oLed/u.k2h4S.uQd1APv0ql84S4d/NPovBnDm',1),(8,'Иванова Екатерина Павловна','example2@gmail.com','?',1),(9,'Смирнов Алексей Николаевич','example3@gmail.com','?',1),(10,'Козлова Татьяна Валерьевна','example4@gmail.com','?',1),(11,'Петров Сергей Андреевич','example5@gmail.com','?',3),(12,'Петров Сергей Андреевич','example5@gmail.com','?',1),(13,'Михайлова Ольга Владимировна','example6@gmail.com','?',1);
 /*!40000 ALTER TABLE `employees` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-11 21:55:31
+-- Dump completed on 2023-11-12 12:18:20

@@ -11,7 +11,8 @@ function checkInData($data){
   foreach($data['ATTENDEES'] as $attendee)
     if (!filter_var($attendee, FILTER_VALIDATE_EMAIL)) 
       return false;
-  
+    
+
   return true;
 
   // Проверка времени: 
@@ -51,12 +52,13 @@ function postNewEvent(
     include BASE_PATH."/server/500.php";
   }
   
+  $unique_id = '6kqjide'.uniqid().'yandex.ru';
   // Строим запрос  
   $req =  'BEGIN:VCALENDAR'.PHP_EOL.
           'VERSION:2.0'.PHP_EOL.
           'PRODID:-//Yandex LLC//Yandex Calendar//EN'.PHP_EOL.
           'BEGIN:VEVENT'.PHP_EOL.
-          'UID:6kqjide'.uniqid().'yandex.ru'.PHP_EOL. 
+          'UID:'.$unique_id.PHP_EOL. 
           "DTSTART;TZID=Europe/Moscow:20231108T051500".PHP_EOL.       // Начало
           "DTEND;TZID=Europe/Moscow:20231108T074500".PHP_EOL.         // Конец
           'SUMMARY:Test name'.PHP_EOL.                                // Название
@@ -70,6 +72,7 @@ function postNewEvent(
           'ATTENDEE;CN=example:mailto:example@gmail.com'.PHP_EOL.
           'END:VEVENT'.PHP_EOL.
           'END:VCALENDAR';
+
 
   try{
     $res = $client->create($req);

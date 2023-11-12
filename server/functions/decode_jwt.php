@@ -15,9 +15,15 @@ function decode_jwt($jwt){
   try {
     $data = JWT::decode($jwt, new Key(JWT_SECRET, JWT_ALG));
     // Если получили неверные подписи
-    if($data->iss != JWT_ISS or $data->aud != JWT_AUD) 
+    if(
+      $data->iss != JWT_ISS 
+      or $data->aud != JWT_AUD
+      or !$data->iat
+      or $data->iat - time() >= JWT_TTL
+    ) 
       include BASE_PATH."/server/401.php";
-    // Если все ок, то получаем данные и проверяем их 
+    // Если все ок, то получаем данные
+    // TODO: Сделать валидацию полученных данных
     $data = $data->data;
   }
   catch (Exception $e) {

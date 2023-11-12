@@ -8,18 +8,37 @@ include_once BASE_PATH."/server/vendor/autoload.php";
 include_once BASE_PATH."/server/functions/index.php";
 
 // ~ ENDPOINTS: 
-// ^ POST /login/
+// ! POST /login/
 endpoint("login", "POST");
+
+// TODO: Регистрация
+
 // ^ GET /user/organizations/
 endpoint("user/organizations");
+
 // ^ GET /organization/getOffices/
 endpoint("organization/getOffices");
+
 // ^ GET /office/getAllRooms/
 endpoint("office/getAllRooms");
+
 // ^ GET /room/info/
 endpoint("room/info");
+
 // ^ GET /room/isFree/
 endpoint("room/isFree");
+
+
+// ! POST /room/isFree/
+endpoint("room/addEvent", "POST");
+
+// ^ GET /user/getMyEvents/
+endpoint("user/getMyEvents");
+
+// ! POST /event/edit/
+endpoint("event/edit", "POST");
+
+// FIXME: remove
 // ^ GET /test/
 endpoint("test");
 

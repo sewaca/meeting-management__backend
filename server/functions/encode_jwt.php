@@ -8,13 +8,14 @@ use \Firebase\JWT\JWT;
  * @throws Exception If there is an error encoding the token.
  * @return string The encoded JWT token.
  */
-function encode_jwt($user_id){
-  if ($user_id < 0) include BASE_PATH.'/server/404.php';
+function encode_jwt($user_email){
+  // TODO:? Возможно стоит добавить user_id 
 
   $token = array(
     "iss" => JWT_ISS,
     "aud" => JWT_AUD,
-    "data" => $user_id,
+    "iat" => time(),
+    "data" => $user_email,
   );
   $jwt = JWT::encode($token, JWT_SECRET, JWT_ALG);
   
