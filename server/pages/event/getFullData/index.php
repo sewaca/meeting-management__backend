@@ -22,7 +22,9 @@ try {
   $stmt->bind_param("s", $event_id);
   $stmt->execute();
   $room_data = array_values($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
-  
+
+  // TODO: Добавить Office Timezone
+
   echo json_encode([
     'id' => $main_data['table_def_id'],
     'name' => $main_data['name'],
@@ -32,9 +34,9 @@ try {
     'end' => $main_data['end'],
     'freq' => [
       'rule' => $main_data['freq_rule'],
-      'rule' => $main_data['freq_interval']
+      'interval' => $main_data['freq_interval']
     ]   
-    ]);
+  ]);
 }
 catch ( Exception $e ) {
   file_put_contents('php://stdout', $e->__toString());

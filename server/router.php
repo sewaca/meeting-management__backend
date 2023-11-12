@@ -41,6 +41,9 @@ endpoint("event/getFullData");
 // ! POST /event/edit/
 endpoint("event/edit", "POST");
 
+// ! DELETE /event/delete/
+endpoint("event/delete", "POST");
+
 // FIXME: remove
 // ^ GET /test/
 endpoint("test");
